@@ -10,10 +10,11 @@ class NotizbuchApp:
     def __init__(self, root):
         self.root = root
         self.root.title("Notizbuch-App by Dandl and Raphi")
-        self.root.geometry("400x300")
+        self.root.geometry("500x300")
         self.root.minsize(300, 200)
 
         self.notizen = []
+        self.dark_mode = False
 
         self.conn = sqlite3.connect('notizen.db')
         self.c = self.conn.cursor()
@@ -49,6 +50,9 @@ class NotizbuchApp:
 
         self.button_edit = ttk.Button(button_frame, text="Notiz bearbeiten", command=self.edit_note)
         self.button_edit.pack(side=tk.LEFT, padx=5)
+
+        self.button_toggle = ttk.Button(button_frame, text="Dark Mode", command=self.toggle_dark_mode)
+        self.button_toggle.pack(side=tk.LEFT, padx=5)
 
         self.listbox = tk.Listbox(self.root, selectmode=tk.MULTIPLE)
         self.listbox.pack(fill=tk.BOTH, expand=True, pady=10)
@@ -111,6 +115,19 @@ class NotizbuchApp:
                     messagebox.showinfo("Success", "Notiz bearbeitet")
                 except sqlite3.Error as e:
                     messagebox.showerror("Database Error", str(e))
+
+    def toggle_dark_mode(self):
+        self.dark_mode = not self.dark_mode
+        if self.dark_mode:
+            self.root.configure(bg='black')
+            self.time_label.configure(bg='black', fg='white')
+            self.eingabe.configure(style='TEntry')
+            self.listbox.configure(bg='black', fg='white')
+        else:
+            self.root.configure(bg='white')
+            self.time_label.configure(bg='white', fg='black')
+            self.eingabe.configure(style='TEntry')
+            self.listbox.configure(bg='white', fg='black')
 
     def update_time(self):
         current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
