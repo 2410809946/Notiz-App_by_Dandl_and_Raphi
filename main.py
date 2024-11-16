@@ -61,13 +61,17 @@ def delete_note():
 eingabe = tk.Entry(fenster)
 eingabe.pack()
 
+# erstelle einen Frame für die Buttons
+button_frame = tk.Frame(fenster)
+button_frame.pack()
+
 # erstelle einen Button zum Hinzufügen von Notizen
-button_add = tk.Button(fenster, text="Hinzufügen", command=add_note)
-button_add.pack()
+button_add = tk.Button(button_frame, text="Neue Notiz hinzufügen", command=add_note)
+button_add.pack(side=tk.LEFT)
 
 # erstelle einen Button zum Löschen von Notizen
-button_delete = tk.Button(fenster, text="Löschen", command=delete_note)
-button_delete.pack()
+button_delete = tk.Button(button_frame, text="Als Erledigt markieren", command=delete_note)
+button_delete.pack(side=tk.LEFT)
 
 # erstelle eine Listbox für die Notizen
 listbox = tk.Listbox(fenster, selectmode=tk.MULTIPLE)
