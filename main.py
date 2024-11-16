@@ -8,8 +8,8 @@ import sqlite3
 # erstelle ein Fenster
 fenster = tk.Tk()
 fenster.title("Notizbuch-App by Dandl and Raphi")
-fenster.geometry("400x300")
-fenster.minsize(300, 200)
+fenster.geometry("400x300") # Größe des Fensters
+fenster.minsize(300, 200) # mindestgröße des Fensters
 
 # erstelle eine Liste für die Notizen
 notizen = []
