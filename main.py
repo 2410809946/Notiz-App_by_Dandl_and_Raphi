@@ -1,6 +1,7 @@
 # 16.11.2024
 # Notizbuch-App by Dandl and Raphi
 
+
 import tkinter as tk
 from tkinter import ttk, messagebox
 from datetime import datetime
@@ -21,6 +22,7 @@ class NotizbuchApp:
 
         self.create_widgets()
         self.load_notes()
+        self.update_time()
 
     def create_table(self):
         try:
@@ -31,6 +33,10 @@ class NotizbuchApp:
             messagebox.showerror("Database Error", str(e))
 
     def create_widgets(self):
+        # Create a Label to display the date and time
+        self.time_label = tk.Label(self.root, font=('Helvetica', 10))
+        self.time_label.pack(anchor='nw', padx=10, pady=5)
+
         self.eingabe = ttk.Entry(self.root)
         self.eingabe.pack(pady=10)
 
@@ -85,6 +91,11 @@ class NotizbuchApp:
                 messagebox.showinfo("Success", "Notiz gelöscht")
             except sqlite3.Error as e:
                 messagebox.showerror("Database Error", str(e))
+
+    def update_time(self):
+        current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        self.time_label.config(text=current_time)
+        self.root.after(1000, self.update_time)
 
     def on_closing(self):
         self.conn.close()
