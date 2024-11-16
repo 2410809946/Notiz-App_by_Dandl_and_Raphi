@@ -1,9 +1,8 @@
 # 16.11.2024
 # Notizbuch-App by Dandl and Raphi
 
-
 import tkinter as tk
-from tkinter import ttk, messagebox
+from tkinter import ttk, messagebox, simpledialog
 from datetime import datetime
 import sqlite3
 
@@ -33,7 +32,6 @@ class NotizbuchApp:
             messagebox.showerror("Database Error", str(e))
 
     def create_widgets(self):
-        # Create a Label to display the date and time
         self.time_label = tk.Label(self.root, font=('Helvetica', 10))
         self.time_label.pack(anchor='nw', padx=10, pady=5)
 
@@ -48,6 +46,9 @@ class NotizbuchApp:
 
         self.button_delete = ttk.Button(button_frame, text="Als Erledigt markieren", command=self.delete_note)
         self.button_delete.pack(side=tk.LEFT, padx=5)
+
+        self.button_edit = ttk.Button(button_frame, text="Notiz bearbeiten", command=self.edit_note)
+        self.button_edit.pack(side=tk.LEFT, padx=5)
 
         self.listbox = tk.Listbox(self.root, selectmode=tk.MULTIPLE)
         self.listbox.pack(fill=tk.BOTH, expand=True, pady=10)
@@ -91,6 +92,25 @@ class NotizbuchApp:
                 messagebox.showinfo("Success", "Notiz gelöscht")
             except sqlite3.Error as e:
                 messagebox.showerror("Database Error", str(e))
+
+    def edit_note(self):
+        selected_note_indices = self.listbox.curselection()
+        if selected_note_indices:
+            index = selected_note_indices[0]
+            old_note = self.listbox.get(index)
+            timestamp, old_text = old_note.split(" - ", 1)
+            new_text = simpledialog.askstring("Notiz bearbeiten", "Bearbeiten Sie die Notiz:", initialvalue=old_text)
+            if new_text:
+                new_note = f"{timestamp} - {new_text}"
+                self.notizen[index] = new_note
+                self.listbox.delete(index)
+                self.listbox.insert(index, new_note)
+                try:
+                    self.c.execute("UPDATE notizen SET notiz = ? WHERE timestamp = ? AND notiz = ?", (new_text, timestamp, old_text))
+                    self.conn.commit()
+                    messagebox.showinfo("Success", "Notiz bearbeitet")
+                except sqlite3.Error as e:
+                    messagebox.showerror("Database Error", str(e))
 
     def update_time(self):
         current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
