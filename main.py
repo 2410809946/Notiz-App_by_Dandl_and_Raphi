@@ -2,11 +2,15 @@
 # Notizbuch-App by Dandl and Raphi
 
 import tkinter as tk
+from datetime import datetime
 
 # erstelle ein Fenster
 fenster = tk.Tk()
 fenster.title("Notizbuch-App by Dandl and Raphi")
 fenster.geometry("400x300")
+
+# Mindestgröße festlegen (Breite x Höhe in Pixel)
+fenster.minsize(300, 200)
 
 # erstelle eine Liste für die Notizen
 notizen = []
@@ -15,8 +19,10 @@ notizen = []
 def add_note():
     notiz = eingabe.get()
     if notiz:
-        notizen.append(notiz)
-        listbox.insert(tk.END, notiz)
+        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        notiz_mit_zeit = f"{timestamp} - {notiz}"
+        notizen.append(notiz_mit_zeit)
+        listbox.insert(tk.END, notiz_mit_zeit)
         eingabe.delete(0, tk.END)
 
 # erstelle eine Funktion zum Löschen von Notizen
