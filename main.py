@@ -21,11 +21,11 @@ def add_note():
 
 # erstelle eine Funktion zum Löschen von Notizen
 def delete_note():
-    selected_note_index = listbox.curselection()
-    if selected_note_index:
-        notiz = listbox.get(selected_note_index)
+    selected_note_indices = listbox.curselection()
+    for index in reversed(selected_note_indices):
+        notiz = listbox.get(index)
         notizen.remove(notiz)
-        listbox.delete(selected_note_index)
+        listbox.delete(index)
 
 # erstelle ein Eingabefeld für die Notizen
 eingabe = tk.Entry(fenster)
@@ -40,7 +40,7 @@ button_delete = tk.Button(fenster, text="Löschen", command=delete_note)
 button_delete.pack()
 
 # erstelle eine Listbox für die Notizen
-listbox = tk.Listbox(fenster)
+listbox = tk.Listbox(fenster, selectmode=tk.MULTIPLE)
 listbox.pack(fill=tk.BOTH, expand=True)
 
 # starte das Fenster
