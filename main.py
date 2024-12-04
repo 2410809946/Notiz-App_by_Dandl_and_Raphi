@@ -3,6 +3,7 @@
 
 import tkinter as tk
 from tkinter import ttk, messagebox, simpledialog
+from tkcalendar import DateEntry
 from datetime import datetime
 import sqlite3
 
@@ -37,40 +38,57 @@ class NotizbuchApp:
 
     def create_widgets(self):
         self.time_label = tk.Label(self.root, font=('Helvetica', 10))
-        self.time_label.pack(anchor='nw', padx=10, pady=5)
+        self.time_label.grid(row=0, column=0, padx=10, pady=5, sticky='w')
 
-        self.eingabe = ttk.Entry(self.root)
-        self.eingabe.pack(pady=10)
+        entry_frame = ttk.Frame(self.root)
+        entry_frame.grid(row=1, column=0, pady=10, padx=10)
 
+        # Add "To Do" label
+        self.todo_label = ttk.Label(entry_frame, text="To Do:")
+        self.todo_label.grid(row=0, column=0, padx=5, sticky='w')
+
+        # Add "Fälligkeit" label
+        self.falligkeit_label = ttk.Label(entry_frame, text="Fälligkeit:")
+        self.falligkeit_label.grid(row=0, column=1, padx=5, sticky='w')
+
+        # Add input fields
+        self.eingabe = ttk.Entry(entry_frame)
+        self.eingabe.grid(row=1, column=0, padx=5, sticky='w')
+
+        self.eingabe2 = DateEntry(entry_frame, date_pattern='yyyy-mm-dd')
+        self.eingabe2.grid(row=1, column=1, padx=5, sticky='w')
+
+        # Center "Kategorie" label, dropdown box, and button
         self.category_label = ttk.Label(self.root, text="Kategorie:")
-        self.category_label.pack(pady=5)
+        self.category_label.grid(row=2, column=0, pady=5, padx=10, sticky='ew', columnspan=2)
 
         self.category_var = tk.StringVar()
-        self.category_menu = ttk.Combobox(self.root, textvariable=self.category_var)
+        self.category_menu = ttk.Combobox(self.root, textvariable=self.category_var, width=10)
         self.category_menu['values'] = self.categories
         self.category_menu.current(0)
-        self.category_menu.pack(pady=5)
+        self.category_menu.grid(row=3, column=0, pady=5, padx=10, sticky='ew', columnspan=2)
 
-        self.add_category_button = ttk.Button(self.root, text="Neue Kategorie hinzufügen", command=self.add_category)
-        self.add_category_button.pack(pady=5)
+        self.add_category_button = ttk.Button(self.root, text="Neue Kategorie hinzufügen", command=self.add_category,
+                                              width=10)
+        self.add_category_button.grid(row=4, column=0, pady=5, padx=10, sticky='ew', columnspan=2)
 
         button_frame = ttk.Frame(self.root)
-        button_frame.pack()
+        button_frame.grid(row=5, column=0, pady=10, padx=10, sticky='w')
 
         self.button_add = ttk.Button(button_frame, text="Neue Notiz hinzufügen", command=self.add_note)
-        self.button_add.pack(side=tk.LEFT, padx=5)
+        self.button_add.grid(row=0, column=0, padx=5)
 
         self.button_delete = ttk.Button(button_frame, text="Als Erledigt markieren", command=self.delete_note)
-        self.button_delete.pack(side=tk.LEFT, padx=5)
+        self.button_delete.grid(row=0, column=1, padx=5)
 
         self.button_edit = ttk.Button(button_frame, text="Notiz bearbeiten", command=self.edit_note)
-        self.button_edit.pack(side=tk.LEFT, padx=5)
+        self.button_edit.grid(row=0, column=2, padx=5)
 
         self.button_toggle = ttk.Button(button_frame, text="Dark Mode", command=self.toggle_dark_mode)
-        self.button_toggle.pack(side=tk.LEFT, padx=5)
+        self.button_toggle.grid(row=0, column=3, padx=5)
 
         self.listbox = tk.Listbox(self.root, selectmode=tk.MULTIPLE)
-        self.listbox.pack(fill=tk.BOTH, expand=True, pady=10)
+        self.listbox.grid(row=6, column=0, pady=10, padx=10, sticky='nsew')
 
     def load_notes(self):
         try:
