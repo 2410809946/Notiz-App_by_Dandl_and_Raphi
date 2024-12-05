@@ -47,7 +47,6 @@ class NotizbuchApp:
         self.todo_label = ttk.Label(entry_frame, text="To Do:")
         self.todo_label.grid(row=0, column=0, padx=5, sticky='w')
 
-
         # Add "Fälligkeit" label
         self.falligkeit_label = ttk.Label(entry_frame, text="Fälligkeit:")
         self.falligkeit_label.grid(row=0, column=1, padx=5, sticky='w')
