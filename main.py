@@ -99,20 +99,26 @@ class NotizbuchApp:
         self.button_frame.columnconfigure(1, weight=1)
 
         self.button_frame2 = ttk.Frame(self.root)
-        self.button_frame2.grid(row=5, column=0, pady=10, padx=10, sticky='w')
+        self.button_frame2.grid(row=5, column=0, pady=10, padx=10, sticky='ew')
 
+        # Konfiguration für gleichmäßige Spaltenverteilung
+        self.button_frame2.columnconfigure(0, weight=1)
+        self.button_frame2.columnconfigure(1, weight=1)
+        self.button_frame2.columnconfigure(2, weight=1)
+        self.button_frame2.columnconfigure(3, weight=1)
+
+        # Buttons gleichmäßig verteilen
         self.button_add_note = ttk.Button(self.button_frame2, text="Neue Notiz hinzufügen", command=self.add_note)
-        self.button_add_note.grid(row=0, column=0, padx=5)
+        self.button_add_note.grid(row=0, column=0, padx=5, sticky='ew')
 
-        self.button_delete_note = ttk.Button(self.button_frame2, text="Als Erledigt markieren",
-                                             command=self.delete_note)
-        self.button_delete_note.grid(row=0, column=1, padx=5)
+        self.button_delete_note = ttk.Button(self.button_frame2, text="Eintrag löschen", command=self.delete_note)
+        self.button_delete_note.grid(row=0, column=1, padx=5, sticky='ew')
 
         self.button_edit_note = ttk.Button(self.button_frame2, text="Notiz bearbeiten", command=self.edit_note)
-        self.button_edit_note.grid(row=0, column=2, padx=5)
+        self.button_edit_note.grid(row=0, column=2, padx=5, sticky='ew')
 
         self.button_toggle = ttk.Button(self.button_frame2, text="Dark Mode", command=self.toggle_dark_mode)
-        self.button_toggle.grid(row=0, column=3, padx=5)
+        self.button_toggle.grid(row=0, column=3, padx=5, sticky='ew')
 
         self.listbox = tk.Listbox(self.root, selectmode=tk.MULTIPLE)
         self.listbox.grid(row=6, column=0, pady=10, padx=10, sticky='nsew')
@@ -165,21 +171,25 @@ class NotizbuchApp:
 
     # Lösche eine Notiz
     def delete_note(self):
-        selected_note_indices = self.listbox.curselection()
-        for index in reversed(selected_note_indices):
-            notiz = self.listbox.get(index)
-            self.notizen.remove(notiz)
-            self.listbox.delete(index)
-            timestamp, notiz_text = notiz.split(" - ", 1)
-            notiz_text, kategorie = notiz_text.rsplit(" (", 1)
-            kategorie = kategorie.rstrip(")")
+        selected_note_indices = self.listbox.curselection()  # Hole die ausgewählten Notizen
+        for index in reversed(
+                selected_note_indices):  # Iteriere über die ausgewählten Notizen in umgekehrter Reihenfolge
+            notiz = self.listbox.get(index)  # Hole die Notiz aus der Listbox
+            self.notizen.remove(notiz)  # Entferne die Notiz aus der Liste
+            self.listbox.delete(index)  # Entferne die Notiz aus der Listbox
+            timestamp, notiz_text = notiz.split(" - ", 1)  # Entpacke den Zeitstempel und den Notiztext
+            notiz_text, kategorie_faelligkeit = notiz_text.rsplit(" (",
+                                                                  1)  # Entpacke den Notiztext und die Kategorie mit Fälligkeitsdatum
+            kategorie, faelligkeit = kategorie_faelligkeit.split(
+                ") - Fällig bis: ")  # Entpacke die Kategorie und das Fälligkeitsdatum
             try:
-                self.c.execute("DELETE FROM notizen WHERE timestamp = ? AND notiz = ? AND kategorie = ?",
-                               (timestamp, notiz_text, kategorie))
-                self.conn.commit()
-                messagebox.showinfo("Success", "Notiz gelöscht")
+                self.c.execute(
+                    "DELETE FROM notizen WHERE timestamp = ? AND notiz = ? AND kategorie = ? AND faelligkeit = ?",
+                    (timestamp, notiz_text, kategorie, faelligkeit))  # Lösche die Notiz aus der Datenbank
+                self.conn.commit()  # Speichere die Änderungen in der Datenbank
             except sqlite3.Error as e:
-                messagebox.showerror("Database Error", str(e))
+                messagebox.showerror("Datenbankfehler",
+                                     str(e))  # Zeige eine Fehlermeldung an, wenn ein Datenbankfehler auftritt
 
     # Bearbeite eine Notiz
     def edit_note(self):
